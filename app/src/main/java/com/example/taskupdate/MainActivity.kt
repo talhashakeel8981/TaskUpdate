@@ -16,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.taskupdate.ui.theme.TaskUpdateTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +28,16 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(navController = navController, startDestination = "welcome") {
                     composable("welcome") { WelcomeScreen(navController) }
-                    composable("main") { MainScreen() }
+
+                    composable("main") {
+                        MainScreen(onAddTaskClick = {
+                            navController.navigate("add")
+                        })
+                    }
+
+                    composable("add") {
+                        AddTaskScreen(navController)
+                    }
                 }
             }
         }
@@ -52,20 +63,51 @@ fun WelcomeScreen(navController: NavController) {
         Button(onClick = {
             navController.navigate("main")
         }) {
-            Text("Tasks List")
+            Text("Continue->")
         }
     }
 }
 
 @Composable
-fun MainScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun MainScreen(onAddTaskClick: () -> Unit) {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = onAddTaskClick) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task")
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // This is where your task list will go in future
+        }
+    }
+
+}
+@Composable
+fun AddTaskScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Soon You'll see your Tasks Here", fontSize = 24.sp)
+        Text(text = "Add Task Screen", fontSize = 24.sp)
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(onClick = {
+            navController.popBackStack() // Goes back to MainScreen
+        }) {
+            Text("Save Task")
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
