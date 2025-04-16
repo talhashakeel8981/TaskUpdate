@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +19,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.taskupdate.ui.theme.TaskUpdateTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardCapitalization
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +61,7 @@ fun WelcomeScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Welcome to My To-Do App!",
+            text = "Welcome to Task Update!",
             fontSize = 24.sp,
             color = MaterialTheme.colorScheme.primary
         )
@@ -87,6 +94,7 @@ fun MainScreen(onAddTaskClick: () -> Unit) {
     }
 
 }
+
 @Composable
 fun AddTaskScreen(navController: NavController) {
     Column(
@@ -100,12 +108,35 @@ fun AddTaskScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // 👇 Add this line to include the TextField
+        AddTaskField()
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         Button(onClick = {
             navController.popBackStack() // Goes back to MainScreen
         }) {
             Text("Save Task")
         }
     }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewAddTaskField() {
+    AddTaskField()
+}
+@Composable
+fun AddTaskField() {
+    var text by remember { mutableStateOf("") }
+
+    TextField(
+        value = text,
+        onValueChange = { text = it },
+        placeholder = { Text("Enter Your Task Title Here...") },
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences
+        )
+    )
 }
 
 
