@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 
 
@@ -32,119 +33,164 @@ class MainActivity : ComponentActivity() {
         setContent {
             TaskUpdateTheme {
                 val navController = rememberNavController()
+                var taskList by remember { mutableStateOf(listOf<String>()) } // Shared task list
 
                 NavHost(navController = navController, startDestination = "welcome") {
                     composable("welcome") { WelcomeScreen(navController) }
 
                     composable("main") {
-                        MainScreen(onAddTaskClick = {
-                            navController.navigate("add")
-                        })
+                        MainScreen(
+                            tasks = taskList,
+                            onAddTaskClick = { navController.navigate("add") }
+                        )
                     }
 
                     composable("add") {
-                        AddTaskScreen(navController)
+                        AddTaskScreen(
+                            navController,
+                            onTaskSaved = { taskTitle ->
+                                taskList = taskList + taskTitle // Add new task
+                            }
+                        )
                     }
                 }
             }
         }
     }
 }
+        @Composable
+        fun WelcomeScreen(navController: NavController) {
+            var userName by remember { mutableStateOf("") }
 
-@Composable
-fun WelcomeScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Welcome to Task Update!",
-            fontSize = 24.sp,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Welcome to Task Update!",
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
 
-        Button(onClick = {
-            navController.navigate("main")
-        }) {
-            Text("Continue->")
-        }
-    }
-}
+                Spacer(modifier = Modifier.height(20.dp))
 
-@Composable
-fun MainScreen(onAddTaskClick: () -> Unit) {
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = onAddTaskClick) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task")
+                TextField(
+                    value = userName,
+                    onValueChange = { userName = it },
+                    placeholder = { Text("Enter your name") },
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Button(onClick = {
+                    navController.navigate("main")
+                }) {
+                    Text("Continue →")
+                }
             }
         }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+
+        @Composable
+        fun MainScreen(
+            tasks: List<String>,
+            onAddTaskClick: () -> Unit
         ) {
-            // This is where your task list will go in future
+            Scaffold(
+                floatingActionButton = {
+                    FloatingActionButton(onClick = onAddTaskClick) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task")
+                    }
+                }
+            ) { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                ) {
+                    Text("Your Tasks:", fontSize = 20.sp)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    for (task in tasks) {
+                        Text("- $task", fontSize = 16.sp)
+                    }
+                }
+            }
         }
-    }
 
-}
+        @Composable
+        fun AddTaskScreen(
+            navController: NavController,
+            onTaskSaved: (String) -> Unit
+        ) {
+            var taskTitle by remember { mutableStateOf("") }
 
-@Composable
-fun AddTaskScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Add Task Screen", fontSize = 24.sp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Add Task Screen", fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(20.dp))
+                AddTaskField(text = taskTitle, onTextChange = { taskTitle = it })
 
-        // 👇 Add this line to include the TextField
-        AddTaskField()
+                Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(onClick = {
-            navController.popBackStack() // Goes back to MainScreen
-        }) {
-            Text("Save Task")
+                Button(onClick = {
+                    if (taskTitle.isNotBlank()) {
+                        onTaskSaved(taskTitle) // save to shared list
+                        navController.popBackStack() // go back
+                    }
+                }) {
+                    Text("Save Task")
+                }
+            }
         }
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun PreviewAddTaskField() {
-    AddTaskField()
-}
-@Composable
-fun AddTaskField() {
-    var text by remember { mutableStateOf("") }
 
-    TextField(
-        value = text,
-        onValueChange = { text = it },
-        placeholder = { Text("Enter Your Task Title Here...") },
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Sentences
-        )
-    )
-}
+        @Composable
+        fun ShowTextInput() {
+            var text by remember { mutableStateOf("") }
 
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text("Enter something") },
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences
+                    )
+                )
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewWelcomeScreen() {
-    TaskUpdateTheme {
-        // Cannot preview navigation screen directly
-        WelcomeScreen(navController = rememberNavController())
-    }
-}
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(text = "You typed: $text", fontSize = 18.sp)
+            }
+        }
+
+        @Composable
+        fun AddTaskField(text: String, onTextChange: (String) -> Unit) {
+            TextField(
+                value = text,
+                onValueChange = onTextChange,
+                placeholder = { Text("Enter Your Task Title Here...") },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences
+                )
+            )
+        }
