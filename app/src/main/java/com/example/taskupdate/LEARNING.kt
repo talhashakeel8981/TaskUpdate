@@ -18,13 +18,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import org.w3c.dom.Text
+import androidx.compose.material3.TopAppBar
+import kotlinx.coroutines.launch
 
 
 import kotlin.math.round
+@Composable
+fun SnackbarExample() {
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar("This is a Snackbar")
+                }
+            }) {
+                Text("Show")
+            }
+        }
+    ) {
+        Text("Click the FAB to show Snackbar", modifier = Modifier.padding(16.dp))
+    }
+}
+
+fun rememberScaffoldState(): Any {
+
+}
 
 
 //========================
@@ -123,38 +151,38 @@ fun TextFieldWithMutableState() {
 //{
 //    TextFieldWithMutableState()
 //}
-@Composable fun UserInput()
-{
- var username by remember{ mutableStateOf("") }
-    var message by remember{ mutableStateOf("") }
-    Column(
-            modifier=Modifier
-                .padding(24.dp)
-                .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-            )
-    {
-TextField(
-    value = username,
-    onValueChange = {username=it},
-    label = {Text("enter your name")}
-)
-        Button(onClick = {
-            message = if (username.isNotBlank()) {
-                "Hello $username"
-            } else {
-                "please enter your name"
-            }
-        }
-            )
-            {
-                if (message.isNotEmpty()) {
-                    Text(text = message)
-                }
-
-        }
-    }
-}
+//@Composable fun UserInput()
+//{
+// var username by remember{ mutableStateOf("") }
+//    var message by remember{ mutableStateOf("") }
+//    Column(
+//            modifier=Modifier
+//                .padding(24.dp)
+//                .fillMaxSize(),
+//        verticalArrangement = Arrangement.spacedBy(16.dp)
+//            )
+//    {
+//TextField(
+//    value = username,
+//    onValueChange = {username=it},
+//    label = {Text("enter your name")}
+//)
+//        Button(onClick = {
+//            message = if (username.isNotBlank()) {
+//                "Hello $username"
+//            } else {
+//                "please enter your name"
+//            }
+//        }
+//            )
+//            {
+//                if (message.isNotEmpty()) {
+//                    Text(text = message)
+//                }
+//
+//        }
+//    }
+//}
 //@Preview (showBackground = true)
 //@Composable fun PreviewUserInput()
 //{
@@ -182,61 +210,67 @@ TextField(
 //
 //Below the button, display the message as a Text.
 //
+//---------------------Text fields
+
+
+//@Composable fun LoginForm(
+//    onclick: () -> Unit = {}
+//)
+//{
+////    var username by remember { mutableStateOf("") }
+////    var password by remember { mutableStateOf("") }
+//    Column (
+//        modifier = Modifier
+//            .padding(10.dp)
+//
+//            .fillMaxSize(),
+//
+////      verticalArrangement = Arrangemen
+//
+//    )
+//
+//    {
+//        TextField(
+//            value = username,
+//            onValueChange = { username = it },
+//            label = { Text("username") }
+//        )
+//        Spacer(
+//            modifier = Modifier
+//                .height(16.dp)
+//                .fillMaxWidth()
+//                .padding(horizontal = 8.dp)
+//        )
+//        TextField(
+//            onValueChange = { password = it },
+//            value = password,
+//            label = { Text("Password") }
+//        )
+//        Spacer(
+//            modifier = Modifier
+//                .height(16.dp)
+//                .fillMaxWidth()
+//                .padding(horizontal = 8.dp)
+//        )
+//        Button(
+//            onClick = {
+//                println("Login clicked with username: $username and password: $password")
+//            }
+//        ) {
+//            Text(text = "Login")
+//        }
+//
+//
+//    }
+//}
+//@Preview (showBackground = true)
+//@Composable fun PreviewLoginForm()
+//{
+//    LoginForm()
+//}
 
 
 
-@Composable fun LoginForm(
-    onclick: () -> Unit = {}
-)
-{
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    Column (
-        modifier = Modifier
-            .padding(10.dp)
-
-            .fillMaxSize(),
-
-//      verticalArrangement = Arrangemen
-
-    )
-
-    {
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("username") }
-        )
-        Spacer(
-            modifier = Modifier
-                .height(16.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-        )
-        TextField(
-            onValueChange = { password = it },
-            value = password,
-            label = { Text("Password") }
-        )
-        Spacer(
-            modifier = Modifier
-                .height(16.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-        )
-        Button(
-            onClick = {
-                println("Login clicked with username: $username and password: $password")
-            }
-        ) {
-            Text(text = "Login")
-        }
 
 
-    }
-}
-@Preview (showBackground = true)
-@Composable fun PreviewLoginForm()
-{
-    LoginForm()
-}
+
