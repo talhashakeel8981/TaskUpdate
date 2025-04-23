@@ -26,7 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.material3.TopAppBar
-
+import androidx.compose.runtime.mutableStateListOf
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 
 //class MainActivity : ComponentActivity() {
@@ -43,23 +45,56 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = "mainscreen")
-            {
-                composable("mainscreen") {
-                    MainScreen(navController)
-                }
-                composable("login") {
-                    Login_Screen(navController)
-                }
-                composable(route = "tasksscreen")
-                {
-                    TasksScreen(navController)
-                }
-            }
+
+            RecompositionExample()
+            ShowToastOnLaunch()
         }
     }
 }
+//            val navController = rememberNavController()
+//
+//            // Initialize task list and addTask function
+//            val taskList = remember { mutableStateListOf<Task>() }
+//
+//            // Function to add task to the taskList
+//            val addTask: (Task) -> Unit = { task ->
+//                taskList.add(task)
+//            }
+//
+//            NavHost(navController = navController, startDestination = "mainScreen") {
+//                composable("mainScreen") {
+//                    MainScreen(navController = navController, taskList = taskList)
+//                }
+//
+//                composable("tasksscreen") {
+//                    TasksScreen(
+//                        navController = navController,
+//                        taskList = taskList,
+//                        addTask = addTask
+//                    )
+//                }
+//
+//                // New route for TaskDetailScreen, receiving title, description, and due date as arguments
+//                composable(
+//                    "taskDetailScreen/{title}/{description}/{dueDate}",
+//                    arguments = listOf(
+//                        navArgument("title") { type = NavType.StringType },
+//                        navArgument("description") { type = NavType.StringType },
+//                        navArgument("dueDate") { type = NavType.StringType }
+//                    )
+//                ) { backStackEntry ->
+//                    val title = backStackEntry.arguments?.getString("title") ?: ""
+//                    val description = backStackEntry.arguments?.getString("description") ?: ""
+//                    val dueDate = backStackEntry.arguments?.getString("dueDate") ?: ""
+//
+//                    TaskDetailScreen(navController = navController, task = Task(title, description, dueDate))
+//                }
+//            }
+//        }
+//    }
+//}
+
+
 //        setContent {
 //            // Using NavHost to handle navigation
 //            val navController = rememberNavController()
